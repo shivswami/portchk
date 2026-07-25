@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "portdocket"
+version = "0.1.0"
+description = "Local dev port registry + scanner. Claim ports per project, detect clashes before your app fails to bind."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Shivprakash Swami" }]
+requires-python = ">=3.8"
+keywords = ["ports", "development", "cli", "registry", "localhost", "clash", "devtools"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development",
+    "Topic :: System :: Networking",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/shivswami/portdocket"
+Issues = "https://github.com/shivswami/portdocket/issues"
+
+[project.scripts]
+portdocket = "portdocket.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["portdocket*"]
