@@ -11,16 +11,21 @@ Usage:
   portchk add <port> <name>     claim a port (path = current dir)
   portchk add <port> <name> -p /path/to/project
   portchk rm <port>             release a claim
+  portchk kill <port> [--force] kill the process listening on a port
+  portchk isfree <port>         exit 0 if port is free, exit 1 if in use
+  portchk wait <port> [--timeout N]  block until port is free (default 30s)
+  portchk export [env|dotenv|json]    dump registry as env vars, dotenv, or JSON
   portchk --version
   portchk --help
 """
 
 import os
 import sys
+import time
 
 from . import __version__
-from .registry import build_port_index, find_conflicts, load, save
-from .scanner import cwd_of, listening_ports
+from .registry import build_port_index, find_conflicts, load, save, to_env_lines, to_json
+from .scanner import cwd_of, find_pid_for_port, kill_pid, listening_ports
 
 # ---------- ANSI ----------
 DIM, BOLD = "\033[2m", "\033[1m"
@@ -179,6 +184,89 @@ def cmd_rm(args):
         print(colour(f"port {port} was not claimed by anyone", DIM))
 
 
+# --------------------------------------------------------------- kill
+def cmd_kill(args):
+    if not args:
+        print(colour("usage: portchk kill <port> [--force]", RED), file=sys.stderr)
+        sys.exit(2)
+    port = int(args[0])
+    force = "--force" in args or "-f" in args
+    pid = find_pid_for_port(port)
+    if pid is None:
+        print(colour(f"port {port} is not in use", DIM))
+        return
+    command = ""
+    for r in listening_ports():
+        if r["port"] == port:
+            command = r["command"]
+            break
+    if not force:
+        label = f"pid {pid} ({command}) on port {port}"
+        try:
+            resp = input(f"Kill {label}? [y/N] ")
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return
+        if resp.strip().lower() not in ("y", "yes"):
+            print(colour("aborted", DIM))
+            return
+    ok = kill_pid(pid, force=force)
+    if ok:
+        print(colour(f"killed pid {pid} ({command}) on port {port}", GREEN))
+    else:
+        print(colour(f"failed to kill pid {pid} on port {port}", RED), file=sys.stderr)
+        sys.exit(1)
+
+
+# --------------------------------------------------------------- isfree
+def cmd_isfree(args):
+    if not args:
+        print(colour("usage: portchk isfree <port>", RED), file=sys.stderr)
+        sys.exit(2)
+    port = int(args[0])
+    if _is_port_listening(port):
+        print(colour(f"port {port} is in use", RED))
+        sys.exit(1)
+    else:
+        print(colour(f"port {port} is free", GREEN))
+        sys.exit(0)
+
+
+# --------------------------------------------------------------- wait
+def cmd_wait(args):
+    if not args:
+        print(colour("usage: portchk wait <port> [--timeout 30]", RED), file=sys.stderr)
+        sys.exit(2)
+    port = int(args[0])
+    timeout = 30
+    if "--timeout" in args:
+        i = args.index("--timeout")
+        if i + 1 < len(args):
+            timeout = int(args[i + 1])
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if not _is_port_listening(port):
+            print(colour(f"port {port} is free", GREEN))
+            return
+        time.sleep(0.5)
+    print(colour(f"timeout: port {port} still in use after {timeout}s", RED), file=sys.stderr)
+    sys.exit(1)
+
+
+# --------------------------------------------------------------- export
+def cmd_export(args):
+    fmt = args[0] if args else "env"
+    reg = load()
+    if fmt in ("env", "dotenv"):
+        for line in to_env_lines(reg):
+            print(line)
+    elif fmt == "json":
+        print(to_json(reg))
+    else:
+        print(colour(f"unknown format: {fmt} (use: env, dotenv, json)", RED), file=sys.stderr)
+        sys.exit(2)
+
+
 # ---------------------------------------------------------------------- dispatch
 COMMANDS = {
     "status": cmd_status,
@@ -187,6 +275,10 @@ COMMANDS = {
     "next": cmd_next,
     "add": cmd_add,
     "rm": cmd_rm,
+    "kill": cmd_kill,
+    "isfree": cmd_isfree,
+    "wait": cmd_wait,
+    "export": cmd_export,
 }
 
 

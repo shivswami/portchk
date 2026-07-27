@@ -135,3 +135,32 @@ def cwd_of(pid):
     if IS_WINDOWS:
         return cwd_of_windows(pid)
     return cwd_of_unix(pid)
+
+
+# ----------------------------------------------------------------- kill by pid
+def find_pid_for_port(port):
+    """Return the PID (string) of the process listening on port, or None."""
+    for r in listening_ports():
+        if r["port"] == port:
+            return r["pid"]
+    return None
+
+
+def kill_pid(pid, force=False):
+    """Kill a process by PID. Returns True on success.
+
+    Unix:   SIGTERM by default, SIGKILL with force=True
+    Windows: taskkill by default, /F (force) with force=True
+    """
+    if IS_WINDOWS:
+        cmd = ["taskkill", "/PID", str(pid)]
+        if force:
+            cmd.insert(1, "/F")
+    else:
+        sig = "9" if force else "15"
+        cmd = ["kill", f"-{sig}", str(pid)]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        return result.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
