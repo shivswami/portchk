@@ -3,7 +3,7 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "portdocket"
+name = "portchk"
 version = "0.1.0"
 description = "Local dev port registry + scanner. Claim ports per project, detect clashes before your app fails to bind."
 readme = "README.md"
@@ -27,11 +27,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/shivswami/portdocket"
-Issues = "https://github.com/shivswami/portdocket/issues"
+Homepage = "https://github.com/shivswami/portchk"
+Issues = "https://github.com/shivswami/portchk/issues"
 
 [project.scripts]
-portdocket = "portdocket.cli:main"
+portchk = "portchk.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["portdocket*"]
+include = ["portchk*"]

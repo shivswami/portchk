@@ -1,4 +1,4 @@
-"""Tests for portdocket. Run with: python -m pytest tests/ -v"""
+"""Tests for portchk. Run with: python -m pytest tests/ -v"""
 
 import json
 import os
@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-import portdocket
-from portdocket import registry as reg_mod
-from portdocket import scanner
-from portdocket.registry import build_port_index, find_conflicts, load, save
+import portchk
+from portchk import registry as reg_mod
+from portchk import scanner
+from portchk.registry import build_port_index, find_conflicts, load, save
 
 
 # ----------------------------------------------------------- fixtures
@@ -109,6 +109,6 @@ class TestScanner:
 # ----------------------------------------------------------- version
 class TestVersion:
     def test_version_is_string(self):
-        assert isinstance(portdocket.__version__, str)
-        parts = portdocket.__version__.split(".")
+        assert isinstance(portchk.__version__, str)
+        parts = portchk.__version__.split(".")
         assert len(parts) >= 2

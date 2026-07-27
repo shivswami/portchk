@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""portdocket - local dev port registry + scanner.
+"""portchk - local dev port registry + scanner.
 
 Claim ports per project, detect clashes before your app fails to bind.
 
 Usage:
-  portdocket                       live listening ports + registry status
-  portdocket list                  show the registry
-  portdocket conflicts             show only double-claimed ports
-  portdocket next [port]           print the next free TCP port >= <port> (default 3000)
-  portdocket add <port> <name>     claim a port (path = current dir)
-  portdocket add <port> <name> -p /path/to/project
-  portdocket rm <port>             release a claim
-  portdocket --version
-  portdocket --help
+  portchk                       live listening ports + registry status
+  portchk list                  show the registry
+  portchk conflicts             show only double-claimed ports
+  portchk next [port]           print the next free TCP port >= <port> (default 3000)
+  portchk add <port> <name>     claim a port (path = current dir)
+  portchk add <port> <name> -p /path/to/project
+  portchk rm <port>             release a claim
+  portchk --version
+  portchk --help
 """
 
 import os
@@ -95,14 +95,14 @@ def cmd_status(_args):
     conflicts = find_conflicts(reg)
     print(
         colour("Conflicts: ", BOLD)
-        + (colour("none", GREEN) if not conflicts else colour("see 'portdocket conflicts'", YELLOW))
+        + (colour("none", GREEN) if not conflicts else colour("see 'portchk conflicts'", YELLOW))
     )
 
 
 def cmd_list(_args):
     reg = load()
     if not reg["projects"]:
-        print(colour("(registry empty) use: portdocket add <port> <name>", DIM))
+        print(colour("(registry empty) use: portchk add <port> <name>", DIM))
         return
     for name in sorted(reg["projects"]):
         info = reg["projects"][name]
@@ -143,7 +143,7 @@ def cmd_next(args):
 
 def cmd_add(args):
     if len(args) < 2:
-        print(colour("usage: portdocket add <port> <name> [-p /path]", RED), file=sys.stderr)
+        print(colour("usage: portchk add <port> <name> [-p /path]", RED), file=sys.stderr)
         sys.exit(2)
     port = int(args[0])
     name = args[1]
@@ -163,7 +163,7 @@ def cmd_add(args):
 
 def cmd_rm(args):
     if not args:
-        print(colour("usage: portdocket rm <port>", RED), file=sys.stderr)
+        print(colour("usage: portchk rm <port>", RED), file=sys.stderr)
         sys.exit(2)
     port = int(args[0])
     reg = load()

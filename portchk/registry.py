@@ -1,12 +1,12 @@
 """JSON-backed port registry.
 
-Registry path: ~/.config/portdocket/registry.json (per-machine, do not sync).
+Registry path: ~/.config/portchk/registry.json (per-machine, do not sync).
 """
 
 import json
 from pathlib import Path
 
-REGISTRY_PATH = Path.home() / ".config" / "portdocket" / "registry.json"
+REGISTRY_PATH = Path.home() / ".config" / "portchk" / "registry.json"
 
 
 def load():
