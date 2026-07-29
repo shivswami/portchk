@@ -18,6 +18,12 @@ If you run multiple local projects, you know the pain: everything defaults to `3
 
     pip install portchk
 
+With [uv](https://docs.astral.sh/uv/):
+
+    uv tool install portchk   # global CLI in an isolated env (recommended)
+    uv pip install portchk    # inside a project venv
+    uvx portchk               # run without installing
+
 Or from source:
 
     git clone https://github.com/shivswami/portchk.git
