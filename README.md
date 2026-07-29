@@ -1,5 +1,10 @@
 # portchk
 
+[![PyPI version](https://img.shields.io/pypi/v/portchk.svg)](https://pypi.org/project/portchk/)
+[![Python 3.8+](https://img.shields.io/pypi/pyversions/portchk.svg)](https://pypi.org/project/portchk/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/shivswami/portchk/blob/main/LICENSE)
+[![Tests](https://github.com/shivswami/portchk/actions/workflows/test.yml/badge.svg)](https://github.com/shivswami/portchk/actions/workflows/test.yml)
+
 **Local dev port registry + scanner. Claim ports per project, detect clashes before your app fails to bind.**
 
 If you run multiple local projects, you know the pain: everything defaults to `3000` or `8000`, and two of them collide. `portchk` keeps a lightweight registry of which project claims which port, and reconciles it against what's actually listening so you see a clash *before* your app refuses to start.
