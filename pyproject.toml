@@ -26,6 +26,9 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
 [project.urls]
 Homepage = "https://github.com/shivswami/portchk"
 Issues = "https://github.com/shivswami/portchk/issues"

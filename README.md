@@ -6,7 +6,7 @@ If you run multiple local projects, you know the pain: everything defaults to `3
 
 - **Cross-platform**: macOS/Linux via `lsof`, Windows via `netstat` + `tasklist`
 - **Zero dependencies**: Python 3.8+ standard library only
-- **Read-only scanning**: inspects system state, changes nothing
+- **Safe by default**: confirmation prompt before killing processes; read-only until you explicitly act
 - **Single JSON registry**: `~/.config/portchk/registry.json` (per-machine)
 
 ## Install
@@ -130,6 +130,16 @@ The registry is per-machine (ports differ across machines) so do not sync it.
 
 On macOS/Linux, `portchk` can read each process's working directory, so it can confirm that the process on a registered port is actually *your* project (green `claimed:`). Windows does not expose a process's cwd without elevation, so on Windows the status falls back to port-number matching only. Clashes are still detected; the cwd confirmation degrades gracefully.
 
+## Requirements
+
+- **Python 3.8+**
+- **macOS / Linux**: `lsof` (pre-installed on macOS, available on all major Linux distros)
+- **Windows**: `netstat` and `tasklist` (both built into Windows)
+
+No other dependencies. `portchk` uses the Python standard library only.
+
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
+
+Copyright (c) 2026 Shivprakash Swami.
